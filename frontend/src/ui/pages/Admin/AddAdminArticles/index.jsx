@@ -4,22 +4,25 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
+import JoditEditor from "jodit-react";
+import { useRef } from "react";
 
-const bookSchema = z.object({
+const articleSchema = z.object({
   title: z.string().min(2, "Title is required"),
   image: z.instanceof(File, { message: "Image is required" }),
   author: z.string().min(1, "Author is required"),
-  category: z.array(z.string()).min(1, "At least one category is required"),
-  slug: z.string().min(2, "Slug is required"),
+  category: z.string().min(1, "Category is required"),
+  abstract: z.string().min(5, "Abstract is required"),
+  content: z.string().min(5, "Content is required"),
+  tableOfContents: z.string().optional(),
   tags: z.string().min(1, "Tags are required"),
-  summary: z.string().optional(),
-  keyfeatures: z.string().optional(),
-  whyChooseThisBook: z.string().optional(),
-  subjectcovering: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 
-const AddAdminBooks = () => {
+const AddAdminArticles = () => {
+  const editor = useRef(null);
+  const [content, setContent] = useState("");
+
   const [authors, setAuthors] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -30,18 +33,16 @@ const AddAdminBooks = () => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(bookSchema),
+    resolver: zodResolver(articleSchema),
     defaultValues: {
       title: "",
       image: "",
       author: "",
-      category: [],
-      slug: "",
+      category: "",
+      abstract: "",
+      content: "",
+      tableOfContents: "",
       tags: "",
-      summary: "",
-      keyfeatures: "",
-      whyChooseThisBook: "",
-      subjectcovering: "",
       isActive: true,
     },
   });
@@ -70,23 +71,18 @@ const AddAdminBooks = () => {
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("author", data.author);
+      formData.append("category", data.category);
+      formData.append("abstract", data.abstract);
+      formData.append("content", data.content);
+      formData.append("tableOfContents", data.tableOfContents || "");
       formData.append("tags", JSON.stringify(tagsArray));
-      formData.append("summary", data.summary || "");
-      formData.append("keyfeatures", data.keyfeatures || "");
-      formData.append("whyChooseThisBook", data.whyChooseThisBook || "");
-      formData.append("subjectcovering", data.subjectcovering || "");
       formData.append("isActive", data.isActive);
-
-      data.category.forEach((cat) => {
-        formData.append("category", cat);
-      });
-
       if (data.image) {
         formData.append("image", data.image);
       }
 
       const res = await axios.post(
-        "http://localhost:8000/api/v1/book",
+        "http://localhost:8000/api/v1/article",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -94,12 +90,13 @@ const AddAdminBooks = () => {
       );
 
       if (res.data.success) {
-        toast.success("Book added successfully!");
+        toast.success("Article added successfully!");
         reset();
+        setContent("");
       }
     } catch (err) {
-      console.error("Error adding book:", err.response || err);
-      toast.error("Failed to add book");
+      console.error("Error adding article:", err.response || err);
+      toast.error("Failed to add article");
     }
   };
 
@@ -108,7 +105,7 @@ const AddAdminBooks = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="max-w-3xl mx-auto p-6 bg-white shadow rounded-2xl space-y-4"
     >
-      <h2 className="text-2xl font-semibold mb-4">Add Book</h2>
+      <h2 className="text-2xl font-semibold mb-4">Add Article</h2>
 
       <input
         type="text"
@@ -121,7 +118,7 @@ const AddAdminBooks = () => {
       <input
         type="file"
         accept="image/*"
-        onChange={(e) => setValue("image", e.target.files[0])} // <-- pick first file
+        onChange={(e) => setValue("image", e.target.files[0])}
         className="w-full p-2 border rounded-lg"
       />
       {errors.image && <p className="text-red-500">{errors.image.message}</p>}
@@ -137,16 +134,10 @@ const AddAdminBooks = () => {
       {errors.author && <p className="text-red-500">{errors.author.message}</p>}
 
       <select
-        multiple
         {...register("category")}
         className="w-full p-2 border rounded-lg"
-        onChange={(e) =>
-          setValue(
-            "category",
-            Array.from(e.target.selectedOptions, (opt) => opt.value)
-          )
-        }
       >
+        <option value="">Select Category</option>
         {categories.map((cat) => (
           <option key={cat._id} value={cat._id}>
             {cat.title}
@@ -157,13 +148,38 @@ const AddAdminBooks = () => {
         <p className="text-red-500">{errors.category.message}</p>
       )}
 
-      <input
-        type="text"
-        placeholder="Slug"
-        {...register("slug")}
+      <textarea
+        placeholder="Abstract"
+        {...register("abstract")}
         className="w-full p-2 border rounded-lg"
       />
-      {errors.slug && <p className="text-red-500">{errors.slug.message}</p>}
+      {errors.abstract && (
+        <p className="text-red-500">{errors.abstract.message}</p>
+      )}
+
+      {/* <textarea
+        placeholder="Content"
+        {...register("content")}
+        className="w-full p-2 border rounded-lg"
+      />
+      {errors.content && (
+        <p className="text-red-500">{errors.content.message}</p>
+      )} */}
+
+      <JoditEditor
+        ref={editor}
+        value={content}
+        onChange={(newContent) => {
+          setContent(newContent);
+          setValue("content", newContent);
+        }}
+      />
+
+      <textarea
+        placeholder="Table of Contents (comma separated)"
+        {...register("tableOfContents")}
+        className="w-full p-2 border rounded-lg"
+      />
 
       <input
         type="text"
@@ -173,33 +189,9 @@ const AddAdminBooks = () => {
       />
       {errors.tags && <p className="text-red-500">{errors.tags.message}</p>}
 
-      <textarea
-        placeholder="Summary"
-        {...register("summary")}
-        className="w-full p-2 border rounded-lg"
-      />
-
-      <textarea
-        placeholder="Key Features"
-        {...register("keyfeatures")}
-        className="w-full p-2 border rounded-lg"
-      />
-
-      <textarea
-        placeholder="Why Choose This Book?"
-        {...register("whyChooseThisBook")}
-        className="w-full p-2 border rounded-lg"
-      />
-
-      <textarea
-        placeholder="Subjects Covered"
-        {...register("subjectcovering")}
-        className="w-full p-2 border rounded-lg"
-      />
-
       <label className="flex items-center gap-2">
         <input type="checkbox" {...register("isActive")} className="w-4 h-4" />
-        Active Book
+        Active Article
       </label>
 
       <button
@@ -207,10 +199,10 @@ const AddAdminBooks = () => {
         disabled={isSubmitting}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
       >
-        {isSubmitting ? "Adding..." : "Add Book"}
+        {isSubmitting ? "Adding..." : "Add Article"}
       </button>
     </form>
   );
 };
 
-export default AddAdminBooks;
+export default AddAdminArticles;

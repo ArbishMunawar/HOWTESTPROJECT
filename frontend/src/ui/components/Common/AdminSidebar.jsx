@@ -10,10 +10,16 @@ import {
   ChevronRight,
   LogOut,
 } from "lucide-react";
+import { useAdmin } from "../../../context/AdminContext";
 
 const AdminSidebar = () => {
-  // const location = useLocation();
+  const location = useLocation();
   const [openMenu, setOpenMenu] = useState(null);
+  const { isAdmin, logout } = useAdmin();
+
+  if (!isAdmin) {
+    return null;
+  }
 
   const menuItems = [
     {
@@ -72,23 +78,34 @@ const AdminSidebar = () => {
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => (
           <div key={item.name}>
-            <button
-              onClick={() => (item.sublinks ? handleToggle(item.name) : null)}
-              className={`flex items-center justify-between w-full px-4 py-2 rounded-lg hover:bg-gray-800 transition ${
-                location.pathname.startsWith(item.path) ? "bg-gray-800" : ""
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {item.icon}
-                <span>{item.name}</span>
-              </div>
-              {item.sublinks &&
-                (openMenu === item.name ? (
+            {item.sublinks ? (
+              <button
+                onClick={() => handleToggle(item.name)}
+                className={`flex items-center justify-between w-full px-4 py-2 rounded-lg hover:bg-gray-800 transition ${
+                  location.pathname.startsWith(item.path) ? "bg-gray-800" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  {item.icon}
+                  <span>{item.name}</span>
+                </div>
+                {openMenu === item.name ? (
                   <ChevronDown size={16} />
                 ) : (
                   <ChevronRight size={16} />
-                ))}
-            </button>
+                )}
+              </button>
+            ) : (
+              <Link
+                to={item.path}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-800 transition ${
+                  location.pathname.startsWith(item.path) ? "bg-gray-800" : ""
+                }`}
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </Link>
+            )}
 
             {item.sublinks && openMenu === item.name && (
               <div className="ml-8 mt-2 space-y-1">
@@ -110,7 +127,10 @@ const AdminSidebar = () => {
       </nav>
 
       <div className="p-4 border-t border-gray-800">
-        <button className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-600 bg-blue-600 transition w-full">
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-blue-600 bg-blue-600 transition w-full"
+        >
           <LogOut size={20} />
           <span>Logout</span>
         </button>

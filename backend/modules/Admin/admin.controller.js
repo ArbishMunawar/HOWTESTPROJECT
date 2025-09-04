@@ -32,6 +32,7 @@ export const adminLogin = async (req, res) => {
 //API to get dashboard data for admin
 
 const adminDashboard = async (req, res) => {
+   console.log("adminDashboard route HIT ✅");
   try {
     const [articles, categories, books, authors] = await Promise.all([
       articleModel.countDocuments(),
@@ -46,14 +47,24 @@ const adminDashboard = async (req, res) => {
       books,
       authors,
     };
-
+  console.log({ articles, categories, books, authors });
     res.json({ success: true, dashData });
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
-export { adminDashboard };
 
-// jodit
-//
+
+
+ const logoutAdmin = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "Admin logged out successfully" });
+};
+
+export { adminDashboard, logoutAdmin };
+

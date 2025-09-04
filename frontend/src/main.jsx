@@ -22,10 +22,13 @@ import AppContextProvider from "./context/AppContext.jsx";
 import { AdminProvider } from "./context/AdminContext.jsx";
 import AdminDashboard from "./ui/pages/Admin/AdminDashboard.jsx";
 import AdminAuthors from "./ui/pages/Admin/AdminAuthors.jsx/index.jsx";
-// import AddAdminAuthor from "./ui/pages/Admin/AddAdminAuthors.jsx/index.jsx";
-import AddAdminCategory from "./ui/pages/Admin/AddAdminCategory.jsx/index.jsx";
+import AddAdminAuthor from "./ui/pages/Admin/AddAdminAuthors.jsx/index.jsx";
+import AddAdminCategory from "./ui/pages/Admin/AddAdminCategory/index.jsx";
 import AdminCategories from "./ui/pages/Admin/AdminCategories/index.jsx";
-// import AddAdminBooks from "./ui/pages/Admin/AddAdminBooks/index.jsx";
+import AddAdminBooks from "./ui/pages/Admin/AddAdminBooks/index.jsx";
+import AdminBooks from "./ui/pages/Admin/AdminBooks/index.jsx";
+import AddArticle from "./ui/pages/Admin/AddAdminArticles/index.jsx";
+import AdminArticles from "./ui/pages/Admin/AdminArticles/index.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -46,10 +49,13 @@ const router = createBrowserRouter([
       { path: "/admin/login", element: <AdminLoginPage /> },
       { path: "/admin/dashboard", element: <AdminDashboard /> },
       { path: "/admin/authors", element: <AdminAuthors /> },
-      // { path: "/admin/new-author", element: <AddAdminAuthor /> },
+      { path: "/admin/new-author", element: <AddAdminAuthor /> },
       { path: "/admin/new-category", element: <AddAdminCategory /> },
       { path: "/admin/category", element: <AdminCategories /> },
-      // { path: "/admin/new-book", element: <AddAdminBooks /> },
+      { path: "/admin/new-book", element: <AddAdminBooks /> },
+      { path: "/admin/books", element: <AdminBooks/> },
+      { path: "/admin/new-article", element: <AddArticle/> },
+      { path: "/admin/articles", element: <AdminArticles/> },
     ],
   },
  

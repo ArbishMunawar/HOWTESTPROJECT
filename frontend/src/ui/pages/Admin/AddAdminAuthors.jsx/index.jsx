@@ -18,7 +18,11 @@ const authorSchema = z.object({
   province: z.string(),
   country: z.string(),
   isVerified: z.boolean().default(true),
-  image: z.any(),
+//   image: z.any(),
+image: z
+  .any()
+  .refine((file) => file?.length > 0, "Image is required"),
+
 });
 
 const AddAdminAuthor = () => {
@@ -46,28 +50,43 @@ const AddAdminAuthor = () => {
     },
   });
 
-  const onSubmit = async (data) => {
-    try {
-      const res = await axios.post("http://localhost:8000/api/v1/author", {
-        ...data,
-        credentials: {
-          qualification: data.qualification,
-          degree: data.degree,
-          university: data.university,
-          city: data.city,
-          province: data.province,
-          country: data.country,
-        },
-      });
-      if (res.data.success) {
-        toast.success("Author added successfully!");
-        reset();
-      }
-    } catch (err) {
-      console.error("Error adding author:", err.response || err);
-      toast.error("Failed to add author");
+
+const onSubmit = async (data) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("name", data.name);
+    formData.append("bio", data.bio);
+    formData.append("about", data.about);
+    formData.append("slug", data.slug);
+    formData.append("profession", data.profession);
+    formData.append("isVerified", data.isVerified);
+    formData.append("qualification", data.qualification);
+    formData.append("degree", data.degree);
+    formData.append("university", data.university);
+    formData.append("city", data.city);
+    formData.append("province", data.province);
+    formData.append("country", data.country);
+
+    if (data.image && data.image[0]) {
+      formData.append("image", data.image[0]);
     }
-  };
+
+    const res = await axios.post("http://localhost:8000/api/v1/author", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (res.data.success) {
+      toast.success("Author added successfully!");
+      reset();
+    }
+  } catch (err) {
+    console.error("Error adding author:", err.response || err);
+    toast.error("Failed to add author");
+  }
+};
 
   return (
     <form

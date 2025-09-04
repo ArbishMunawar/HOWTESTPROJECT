@@ -19,7 +19,7 @@ const AppContextProvider = ({ children }) => {
   const getArticlesData = async () => {
     try {
       setArticlesLoading(true);
-      const { data } = await axios.get(`${backendUrl}/api/v1/article/list`);
+      const { data } = await axios.get(`${backendUrl}/api/v1/article`);
       setArticles(data.data || []);
     } catch (error) {
       console.error(error);

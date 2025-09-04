@@ -25,10 +25,11 @@ const createAuthor = asyncHandler(async (req, res) => {
   const slug = await generateUniqueSlug(name, authorModel);
   const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
     resource_type: "image",
-    folder: "categories",
+    folder: "author",
   });
 
   const author = await authorModel.create({
+    name,
     bio,
     about,
     profession,
