@@ -12,7 +12,6 @@ const AdminArticles = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">All Articles</h1>
 
-      {/* Search + Filter */}
       <div className="flex gap-2 mb-4">
         <input
           type="text"
@@ -26,7 +25,6 @@ const AdminArticles = () => {
         </select>
       </div>
 
-      {/* Articles Table */}
       <table className="w-full border">
         <thead>
           <tr className="bg-gray-100">

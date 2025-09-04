@@ -20,7 +20,7 @@ export const AdminProvider = ({ children }) => {
       });
       if (res.data.success) {
         setIsAdmin(true);
-        // setIsAdmin(res.data.admin);
+        setIsAdmin(res.data.admin);
       } else {
         setIsAdmin(false);
       }
@@ -48,7 +48,6 @@ export const AdminProvider = ({ children }) => {
     } catch (error) {}
   };
 
-  // Admin Logout
   const logout = async () => {
     try {
       await axios.post(
@@ -65,7 +64,6 @@ export const AdminProvider = ({ children }) => {
 
   useEffect(() => {
     checkAdmin();
-    // getDashData();
   }, []);
 
   useEffect(() => {

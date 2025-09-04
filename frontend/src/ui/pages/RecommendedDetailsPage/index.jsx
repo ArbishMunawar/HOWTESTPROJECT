@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router";
-import UseFetch from "../../../hooks/UseFetch";
+// import UseFetch from "../../../hooks/UseFetch";
 import Sidebar from "../../sections/RecommendedSidebar/Sidebar";
 import Teracy from "../../../assets/images/Teracy.png";
 import DateIcon from "../../../assets/icons/DateIcon";
@@ -15,41 +15,42 @@ import S2 from "../../../assets/images/S2.png";
 import Table from "../../components/Common/Table";
 import TakeAway from "../../components/Common/TakeAway";
 import SidebarOrientation from "../../components/Common/SidebarOrientation";
+import { useContext } from "react";
+import { AppContext } from "../../../context/AppContext";
 
 const RecommendedDetailsPage = () => {
   const { id } = useParams();
 
-  const { data, isLoading } = UseFetch(`/articles/${id}`);
-
+  const { articles, isLoading } = useContext(AppContext);
+  // const { article, isLoading } = UseFetch(`/articles/${id}`);
+  const article = articles.find((a) => a._id === id);
   if (isLoading) {
     return <p className="text-center py-10">Loading...</p>;
   }
 
-  if (!data) {
-    return <p className="text-center py-10">No data found for this article.</p>;
-  }
+  if (!article) return <p>No data found for this article.</p>;
 
   return (
     <>
       <div className="md:flex lg:max-w-[1200px] mx-auto">
         <div className=" px-4 py-[70px] lg:max-w-[1200px] md:max-w-[70%]">
           <h1 className="text-[22px] font-[600] mb-4 lg:text-[40px] lg:font-[700]">
-            {data.title}
+            {article.title}
           </h1>
           <div className="flex  ">
-            {data.author?.image && (
+            {article.author?.image && (
               <img
-                src={Teracy}
-                alt={data.author.name}
+                src={article.author.image}
+                alt={article.author.name}
                 className=" mb-6 h-[60px] w-[60px]"
               />
             )}
             <div className="pl-4 md:w-[60%]">
               <div className="text-[#231F2 text-[14px] md:text-[16px] font-[500] ">
-                <span>{data.author?.name || "Unknown Author"}</span>
+                <span>{article.author?.name || "Unknown Author"}</span>
               </div>
               <span className="text-text-normal-gray text-[12px] font-[400] ">
-                {data.author?.bio || "No bio available"}
+                {article.author?.bio || "No bio available"}
               </span>
               <div className="text-azure-blue text-[12px] font-[400]">
                 <a href="">View Author</a>
@@ -58,7 +59,7 @@ const RecommendedDetailsPage = () => {
           </div>
 
           <div className="mt-5 text-[#3874FF] text-[12px] md:text-[16px] font-[400] grid grid-cols-2 items-center grid-rows-2 md:grid md:grid-cols-3 md:pr-20">
-            {data.tags?.map((tag, index) => (
+            {article.tags?.map((tag, index) => (
               <span key={index}>{tag}</span>
             ))}
           </div>
@@ -68,7 +69,7 @@ const RecommendedDetailsPage = () => {
               <div className="flex  border-r gap-2 pr-3">
                 <DateIcon />
                 <span>
-                  {new Date(data.createdAt).toLocaleDateString("en-US", {
+                  {new Date(article.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -78,7 +79,7 @@ const RecommendedDetailsPage = () => {
 
               <div className="flex gap-2 items-center pl-2 pr-2">
                 <EyeIcon />
-                <span>{data.views}</span>
+                <span>{article.views}</span>
               </div>
             </div>
             <div className="flex gap-3">
@@ -91,7 +92,7 @@ const RecommendedDetailsPage = () => {
           </div>
 
           <div className="text-[15px] md:text-[18px] lg:text-[18px] font-[400] text-rasin-black">
-            <p className="my-[40px]">{data.abstract}</p>
+            <p className="my-[40px]">{article.abstract}</p>
 
             <img src={laptop} alt="laptop image" className="rounded-[10px]" />
 

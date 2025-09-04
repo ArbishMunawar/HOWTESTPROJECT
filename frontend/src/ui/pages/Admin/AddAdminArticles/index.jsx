@@ -54,8 +54,8 @@ const AddAdminArticles = () => {
           axios.get("http://localhost:8000/api/v1/author"),
           axios.get("http://localhost:8000/api/v1/category"),
         ]);
-        setAuthors(authorsRes.data.data || []);
-        setCategories(categoriesRes.data.data || []);
+        setAuthors(authorsRes.data.data );
+        setCategories(categoriesRes.data.data);
       } catch (err) {
         console.error("Error fetching authors/categories:", err);
         toast.error("Failed to load authors or categories");
