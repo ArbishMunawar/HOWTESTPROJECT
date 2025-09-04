@@ -1,7 +1,7 @@
 import userModel from "./user.model.js";
 import bcrypt from "bcryptjs";
 import { ApiError } from "../../utils/ApiError.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { asyncHandler } from "../../utils/asyncHandle.js";
 import sendToken from "../../utils/SendToken.js";
 
 // Register user

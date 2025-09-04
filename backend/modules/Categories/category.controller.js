@@ -2,7 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "./category.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import { asyncHandler } from "../../utils/asyncHandler.js";
+import { asyncHandler } from "../../utils/asyncHandle.js";
 import generateUniqueSlug from "../../utils/GenerateSlug.js";
 
 cloudinary.config({

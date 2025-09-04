@@ -32,7 +32,7 @@ export const adminLogin = async (req, res) => {
 //API to get dashboard data for admin
 
 const adminDashboard = async (req, res) => {
-   console.log("adminDashboard route HIT ✅");
+   console.log("adminDashboard ");
   try {
     const [articles, categories, books, authors] = await Promise.all([
       articleModel.countDocuments(),
@@ -55,8 +55,6 @@ const adminDashboard = async (req, res) => {
   }
 };
 
-
-
  const logoutAdmin = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -67,4 +65,3 @@ const adminDashboard = async (req, res) => {
 };
 
 export { adminDashboard, logoutAdmin };
-
