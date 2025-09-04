@@ -1,6 +1,6 @@
 import bookModel from "./books.model.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import { asyncHandler } from "../../utils/asyncHandle.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 import generateUniqueSlug from "../../utils/GenerateSlug.js";
 import { v2 as cloudinary } from "cloudinary";
 import { ApiError } from "../../utils/ApiError.js";
